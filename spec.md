@@ -6,20 +6,20 @@
 * [Primary Header](#primary-header)
 * [Transformations](#transformations)
     * [Plane Transformations](#plane-transformations)
-        0. [ChannelCompact](#0-channelcompact)
-        1. [YCoCg](#1-ycocg)
-        2. [Reserved Slot](#2-reserved-slot)
-        3. [PermutePlanes](#3-permuteplanes)
-        4. [Bounds](#4-bounds)
-        5. [PaletteAlpha](#5-palettealpha)
-        6. [Palette](#6-palette)
-        7. [ColorBuckets](#7-colorbuckets)
-        8. [Reserved Slot](#8-reserved-slot)
-        9. [Reserved Slot](#9-reserved-slot)
+        * [ChannelCompact](#0-channelcompact)
+        * [YCoCg](#1-ycocg)
+        * [Reserved Slot](#2-reserved-slot)
+        * [PermutePlanes](#3-permuteplanes)
+        * [Bounds](#4-bounds)
+        * [PaletteAlpha](#5-palettealpha)
+        * [Palette](#6-palette)
+        * [ColorBuckets](#7-colorbuckets)
+        * [Reserved Slot](#8-reserved-slot)
+        * [Reserved Slot](#9-reserved-slot)
     * [Frame Transformations](#frame-transformations)
-        10. [DuplicateFrame](#10-duplicateframe)
-        11. [FrameShape](#10-frameshape)
-        12. [FrameLookback](#10-framelookback)
+        * [DuplicateFrame](#10-duplicateframe)
+        * [FrameShape](#10-frameshape)
+        * [FrameLookback](#10-framelookback)
 * [Interlaced Encoding and Non Interlaced Encoding](#interlaced-encoding-and-non-interlaced-encoding)
 * [MANIAC Probability Model and MANIAC Trees](#maniac-probability-model-and-maniac-trees)
 * [Pixeldata Organisation](#pixeldata-organisation)
@@ -105,10 +105,12 @@ encode_bit(rac, bit, chance):
         rac.range = rac.range - chance
 ```
 
-The range is renormalised by;
+Renormalisation of the range is done to ensure that precision of the range coder
+is within the acceptable limits. This is run before each decode or encode cycle.
+The range is renormalised by:
 
 ```
-renorm(rac):
+encoder_renorm(rac):
     int byte;
     while rac.range <= MIN_RANGE:
         byte = rac.low >> MIN_RANGE_BITS
@@ -133,7 +135,7 @@ renorm(rac):
                 rac.delayed_count = rac.delayed_count - 1
             rac.delayed_byte = byte & 0xFF
 
-        /* Delayed byte condition */
+        /* Delayed Byte or Straddle condition */
         else:
             rac.delayed_count = rac.delayed_count + 1
 
@@ -148,7 +150,8 @@ logic's overflow and non overflow conditions, aside from their analogusness to
 the interval being in the fist half and the second half of the whole range from
 0 to 1 in arithmetic coding. Further investigation is needed.
 
-And finally, the range coder is flushed and ended by doing the following:
+And finally, the range coder is flushed and ended by doing the following, such
+that all remaining bits describing the data are 'flushed' out:
 
 ```
 encoder_flush(rac):
@@ -160,17 +163,62 @@ encoder_flush(rac):
 
 ## Range Decoding
 
-```
+The decoder is initialised as follows. The the lower bound of the range, `low`
+is filled with bytes from the input stream.
 
 ```
+decoder_init(rac):
+    rac.low = 0
+    rac.range = MIN_RANGE
+    int r = MIN_RANGE
+    while r > 1:
+        rac.low = rac.low << 8
+        low = low | input_byte()
+        r = r >> 8
+```
+
+To decode a particular bit with chance `chance`, the following is done:
+
+```
+decode_bit(rac, chance):
+    if rac.low >= rac.range - chance:
+        rac.low = rac.low - rac.range - chance
+        rac.range = chance
+        return 1 // 1 is the bit.
+    else
+        rac.range = rac.range - chance
+        return 0 // 0 is the bit.
+```
+
+The renormalisation loop is as follows:
+
+```
+decoder_renorm():
+    while rac.range < MIN_RANGE:
+        rac.low = rac.low << 8
+        rac.range = rac.range << 8
+        rac.low = rac.low | input_byte()
+```
+
+Since the data we ask to be extracted to the stream is the only data we require,
+there is no need to detect end of stream and hence there is no decoder flushing
+routine present or used.
+
+## Probability Models and Chance Table
+
+FLIF uses a variable probability model for updating the probability values of
+each symbol that occurs. 
 
 # Primary Header
+
 
 # Metadata
 
 # Secondary Header
 
 # Transformations
+
+# Ranges
 
 ## Plane Transformations
 

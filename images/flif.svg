@@ -49,11 +49,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="553.87011"
-     inkscape:cy="141.24185"
+     inkscape:zoom="1.0703125"
+     inkscape:cx="691.04236"
+     inkscape:cy="285.68495"
      inkscape:document-units="mm"
-     inkscape:current-layer="g988"
+     inkscape:current-layer="g7810"
      showgrid="false"
      showguides="false"
      inkscape:snap-global="true"
@@ -86,7 +86,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -124,13 +124,13 @@
            id="g7810">
           <text
              id="text821"
-             y="8.7295361"
-             x="75.292091"
+             y="5.8363056"
+             x="79.56881"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.62387562px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.52723831px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
              xml:space="preserve"><tspan
                style="stroke-width:0.52723831px"
-               y="8.7295361"
-               x="75.292091"
+               y="5.8363056"
+               x="79.56881"
                id="tspan819"
                sodipodi:role="line">FLIF Image Format</tspan></text>
           <text
